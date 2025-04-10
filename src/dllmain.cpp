@@ -236,10 +236,23 @@ void Framerate()
     if (bDisableFPSLimit) 
     {
         // Framerate cap
+		/*
         std::uint8_t* FramerateCapScanResult = Memory::PatternScan(exeModule,"C5 F8 ?? ?? 0F 83 ?? ?? ?? ?? C5 FA ?? ?? ?? ?? ?? ?? 48 8B ?? ?? ?? ?? ?? 48 85 ?? 78 ??");
         if (FramerateCapScanResult) {
             spdlog::info("Framerate: Cap: Address is {:s}+{:x}", sExeName.c_str(), FramerateCapScanResult - (std::uint8_t*)exeModule);
             Memory::PatchBytes(FramerateCapScanResult + 0x3, "\xC9\x0F\x84", 3);
+            spdlog::info("Framerate: Cap: Patched instruction.");
+        }
+        else {
+            spdlog::error("Framerate: Cap: Pattern scan failed.");
+        }
+		*/
+		
+		//Fluffy: 60fps cap using code change by Ersh
+		std::uint8_t* FramerateCapScanResult = Memory::PatternScan(exeModule,"C5 FA 10 47 28 C5 FA 11 46 28 8A 47 2C 88 46 2C 48 83 C4 28");
+        if (FramerateCapScanResult) {
+            spdlog::info("Framerate: Cap: Address is {:s}+{:x}", sExeName.c_str(), FramerateCapScanResult - (std::uint8_t*)exeModule);
+            Memory::PatchBytes(FramerateCapScanResult + 0x0, "\xC7\x46\x28\x00\x00\x70\x42\x90\x90\x90", 10);
             spdlog::info("Framerate: Cap: Patched instruction.");
         }
         else {
